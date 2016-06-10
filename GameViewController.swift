@@ -17,7 +17,7 @@ class GameViewController: UIViewController {
     @IBOutlet var resultLabel: UILabel!
     
     var timer: NSTimer!
-    var score: Int = 1000
+    var score: Int = 0
     let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
     
     let width: CGFloat = UIScreen.mainScreen().bounds.size.width
@@ -30,7 +30,7 @@ class GameViewController: UIViewController {
         
         resultLabel.hidden = true
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(0.005, target: self, selector: "up", userInfo: nil, repeats: true)
+        timer = NSTimer.scheduledTimerWithTimeInterval(0.005, target: self, selector: #selector(GameViewController.up), userInfo: nil, repeats: true)
         timer.fire()
     }
 
@@ -67,17 +67,18 @@ class GameViewController: UIViewController {
     @IBAction func stop() {
         if timer.valid == true {
             timer.invalidate()
-            
+            var s = 1000
             for i in 0 ..< 3 {
-                score = score - abs(Int(width/2 - positionX[i]))*2
+                s = s - abs(Int(width/2 - positionX[i]))*2
             }
+            score = s
             resultLabel.text = "Score:" + String(score)
             resultLabel.hidden = false
         }
     }
     
     @IBAction func retry(){
-        score = 1000
+        score = 0
         positionX = [width/2, width/2, width/2]
         self.start()
     }
@@ -87,9 +88,9 @@ class GameViewController: UIViewController {
         
         self.dismissViewControllerAnimated(true, completion: nil)
         
-        var highScore1: Int = defaults.integerForKey("score1")
-        var highScore2: Int = defaults.integerForKey("score2")
-        var highScore3: Int = defaults.integerForKey("score3")
+        let highScore1: Int = defaults.integerForKey("score1")
+        let highScore2: Int = defaults.integerForKey("score2")
+        let highScore3: Int = defaults.integerForKey("score3")
         
         if score > highScore1{
             defaults.setInteger(score, forKey: "score1")
